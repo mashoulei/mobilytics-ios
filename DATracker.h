@@ -28,10 +28,7 @@
  @property
  
  @abstract
- Accessor to the Mixpanel People API object.
- 
- @discussion
- See the documentation for MixpanelDelegate below for more information.
+ Accessor to the DATracker People API object.
  */
 @property (atomic, readonly, strong) DAPeople *people;
 
@@ -94,7 +91,6 @@
  Set user account
  */
 - (void)loginUser:(NSString *)userId;
-- (void)loginUser:(NSString *)userId userAccount:(NSString *)userAccount;
 
 - (void)logoutUser;
 
@@ -134,20 +130,6 @@
  If you also want to record location of an event
  */
 - (void)trackEvent:(NSString *)eventId costTime:(int)seconds latitude:(double)latitude longitude:(double)longitude category:(NSString *)category label:(NSString *)label withAttributes:(NSDictionary *)attributes;
-
-/*
- Normally, only events in a user session can be tracked, 
-   if you want to record event before session begins (before applicationWillEnterForeground), use a false mustInSession
- */
-- (void)trackEvent:(NSString *)eventId costTime:(int)seconds latitude:(double)latitude longitude:(double)longitude category:(NSString *)category label:(NSString *)label withAttributes:(NSDictionary *)attributes mustInSession:(BOOL)mustInSession;
-
-/*
- You can record event in multiple categories (cat1->cat2->cat3->cat4 ...) as below,
-    [tracker trackEvent:@"eventId" costTime:0 userId:@"joedoe" withMultipleCategories:@"cat1", @"var1", @"cat2", @"var2", @"cat3", @"var3", @"cat4", @"var4", nil];
- @costTime can be set to 0 if you don't care about it
- Currently, categories deeper than 5 will be trimmed.
- */
-- (void)trackEvent:(NSString *)eventId costTime:(int)seconds withMultipleCategories:(NSString *)primaryId, ... NS_REQUIRES_NIL_TERMINATION;
 
 /*
  Record search activity.
@@ -302,7 +284,7 @@
 /*
  @method
  
- @abstract
+ @abstract˜
  Removes a previously registered super property.
  
  @discussion
@@ -312,7 +294,7 @@
  not registered is ignored.
  
  Note that after removing a super property, events will show the attribute as
- having the value <code>undefined</code> in Mixpanel until a new value is
+ having the value <code>undefined</code> in DATracker until a new value is
  registered.
  
  @param propertyName   array of property name strings to remove
@@ -374,20 +356,67 @@
  
  @discussion
  <b>You should not instantiate this object yourself.</b> An instance of it will
- be available as a property of the main Mixpanel object. Calls to Mixpanel
+ be available as a property of the main DATracker object. Calls to DATracker
  People methods will look like this:
  */
 @interface  DAPeople: NSObject
 
-/**
- *  DAPeople init
- *
- *  @discussion
- *  Called by the property <people> in DATracker.
- *
- *  @param tracker   SDK
+/*
+ DAPeople init
+ 
+ @discussion
+ Called by the property <people> in DATracker.
+ 
+ @param tracker   SDK
  */
 - (instancetype)initWithSDK:(DATracker *)tracker;
+
+/*
+ set user's location
+ 
+ @param country country
+ @param region  province
+ @param city    city
+ */
+- (void)setLocation:(NSString *)country region:(NSString *)region city:(NSString *)city;
+
+/*
+ set user's account, realName, birthday, gender
+ 
+ @param account
+ @param realName
+ @param birthday
+ @param gender   0 is female, 1 is male, 2 is unknown
+ */
+- (void)setPopulationWithAccount:(NSString *)account realName:(NSString *)realName birthday:(NSDate *)birthday gender:(NSInteger)gender;
+
+/*
+ set user's account
+ 
+ @param account
+ */
+- (void)setAccount:(NSString *)account;
+
+/*
+ set user's real name
+ 
+ @param realName
+ */
+- (void)setRealName:(NSString *)realName;
+
+/*
+ set user's birthday
+ 
+ @param birthday
+ */
+- (void)setBirthday:(NSDate *)birthday;
+
+/*
+ set user's gender
+ 
+ @param gender    0 is female, 1 is male, 2 is unknown
+ */
+- (void)setGender:(NSInteger)gender;
 
 /*
  @method
